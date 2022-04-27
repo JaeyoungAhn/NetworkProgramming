@@ -19,6 +19,10 @@ int main(int argc, char *argv[]) {
 	socklen_t adr_sz;
 	int fd_max, str_len, fd_num, i;
 	char buf[BUF_SIZE];
+	char mes[50];
+	char order[2];
+	char* mes3="Server : Welcome~";
+	char clnum=1;
 	if(argc !=2){
 		printf("Usage: %s <port>\n", argv[0]);
 		exit(1);
@@ -41,13 +45,11 @@ int main(int argc, char *argv[]) {
 
 	while(1){
 		cpy_reads = reads;
-		timeout.tv_sec =5;
-		timeout.tv_usec = 5000;
-		if((fd_num = select(fd_max + 1, &cpy_reads, 0, 0, &timeout)) == -1)
+		if((fd_num = select(fd_max + 1, &cpy_reads, 0, 0, NULL)) == -1)
 			break;
 		if(fd_num == 0)
 			continue;
-		for(i = 0; i < fd_max + 1; i++){
+		for(i = 3; i < fd_max + 1; i++){
 			if(FD_ISSET(i, &cpy_reads)){
 				if(i == serv_sock){
 					adr_sz = sizeof(clnt_adr);
@@ -56,14 +58,56 @@ int main(int argc, char *argv[]) {
 					if(fd_max < clnt_sock)
 						fd_max = clnt_sock;
 					printf("connected client: %d \n", clnt_sock);
+					write(clnt_sock, mes3, sizeof(mes3));
+					memset(&mes, 0, 50);
+					strcat(mes, "The number of clients is ");
+					order[0]=(clnum++)+48;
+					order[1]=0;
+					strcat(mes, order);
+					strcat(mes, " now.\n");
+					write(clnt_sock, mes, strlen(mes));
+					for(int j=4; j<=fd_max; j++) {
+						if(FD_ISSET(j, &reads)){
+						memset(&mes, 0, 50);
+						strcpy(mes, "server: client ");
+						order[0]=(char)clnt_sock+48;
+						order[1]=0;
+						strcat(mes, order);
+						strcat(mes, " has joined this chatting room\n");
+						if(j != clnt_sock) write(j, mes, strlen(mes));
+						}
+					}
 				}else {
 					str_len = read(i, buf, BUF_SIZE);
 					if(str_len == 0){
 						FD_CLR(i, &reads);
 						close(i);
+						clnum--;
 						printf("closed client: %d \n", i);
+						for(int j=4; j<=fd_max; j++) {
+							if(FD_ISSET(j, &reads)){
+								memset(&mes, 0, 50);
+								strcat(mes, "client ");
+								order[0]=(char)i+48;
+								order[1]=0;
+								strcat(mes, order);
+								strcat(mes, " has left this chatting room\n");
+								write(j, mes, strlen(mes));			
+							}
+						}
+
 					}else{
-						write(i, buf, str_len);
+						buf[str_len]=0;	
+						for(int j=4; j<=fd_max; j++){
+							memset(&mes, 0, 50);
+							strcpy(mes, "client ");
+							order[0]=(char)i+48;
+							order[1]=0;
+							strcat(mes, order);
+							strcat(mes, " : ");
+							strcat(mes, buf);
+							if(j != i) write(j, mes, strlen(mes)); 
+						}
 					}
 				}
 			}	
