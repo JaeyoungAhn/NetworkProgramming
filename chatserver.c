@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 	char buf[BUF_SIZE];
 	char mes[50];
 	char order[2];
-	char* mes3="Server : Welcome~";
+	char* mes3="Server : Welcome~\n";
 	char clnum=1;
 	if(argc !=2){
 		printf("Usage: %s <port>\n", argv[0]);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 					if(fd_max < clnt_sock)
 						fd_max = clnt_sock;
 					printf("connected client: %d \n", clnt_sock);
-					write(clnt_sock, mes3, sizeof(mes3));
+					write(clnt_sock, mes3, strlen(mes3));
 					memset(&mes, 0, 50);
 					strcat(mes, "The number of clients is ");
 					order[0]=(clnum++)+48;
