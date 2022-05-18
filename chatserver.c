@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
 					printf("connected client: %d \n", clnt_sock);
 					write(clnt_sock, mes3, strlen(mes3));
 					memset(&mes, 0, 50);
-					strcat(mes, "The number of clients is ");
+					strcat(mes, "Server: The number of clients is ");
 					order[0]=(clnum++)+48;
 					order[1]=0;
 					strcat(mes, order);
@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 					for(int j=4; j<=fd_max; j++) {
 						if(FD_ISSET(j, &reads)){
 						memset(&mes, 0, 50);
-						strcpy(mes, "server: client ");
+						strcpy(mes, "Server: client ");
 						order[0]=(char)clnt_sock+48;
 						order[1]=0;
 						strcat(mes, order);

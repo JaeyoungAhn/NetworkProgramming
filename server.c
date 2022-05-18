@@ -36,7 +36,7 @@ int main(int argc, char* argv[]){
 	for(i=0; i<5; i++){
 		clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);
 		if(clnt_sock == -1) error_handling("accept() error!");
-
+		puts("new client connected ...");
 		while((str_len = read(clnt_sock, hostname, BUF_SIZE)) !=0){
 			hostname[str_len-1]='\0';
 	
@@ -52,6 +52,7 @@ int main(int argc, char* argv[]){
 			}
 		}
 		close(clnt_sock);
+		puts("client disconnected...");
 	}
 	close(serv_sock);
 	return 0;
