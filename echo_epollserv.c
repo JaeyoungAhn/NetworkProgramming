@@ -67,26 +67,16 @@ int main(int argc, char *argv[])
 			}
 			else
 			{
-				str_len=read(ep_events[i],data.fd, buf, BUF_SIZE);
+				str_len=read(ep_events[i].data.fd, buf, BUF_SIZE);
 				if(str_len==0) // close request!
 				{
-					epoll_ctl(epfd,EPOLL_CTL_DEL, ep_events[i].data.fd NULL);
+					epoll_ctl(epfd,EPOLL_CTL_DEL, ep_events[i].data.fd, NULL);
 					close(ep_events[i].data.fd);
 					printf("closed client: %d \n", ep_events[i].data.fd);
 				}
 				else
 				{
-					str_len=read(ep_events[i].data.fd, buf, BUF_SIZE);
-					if(str_len==0) // close request!
-					{
-						epoll_ctl(epfd, EPOLL_CTL_DEL, ep_events[i].data.fd, NULL);
-						close(ep_events[i].data.fd);
-						printf("closed client: %d \n", ep_events[i].data.fd);
-					}
-					else
-					{
-						write(ep_events[i].data.fd, buf, str_len); // echo!
-					}
+					write(ep_events[i].data.fd, buf, str_len); // echo!
 				}
 			}
 		}
