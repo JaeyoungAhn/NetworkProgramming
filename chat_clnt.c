@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 	pthread_t snd_thread, rcv_thread;
 	void * thread_return;
 	if(argc!=4) {
-		printf("Usage : %S <IP> <port> <name>\n", argv[0]);
+		printf("Usage : %s <IP> <port> <name>\n", argv[0]);
 		exit(1);
 	}
 
@@ -60,7 +60,7 @@ void * send_msg(void * arg) { // send thread main
 	return NULL;
 }
 
-void * rcv_msg(void * arg) { // read thread main
+void * recv_msg(void * arg) { // read thread main
 	int sock=*((int*)arg);
 	char name_msg[NAME_SIZE+BUF_SIZE];
 	int str_len;
